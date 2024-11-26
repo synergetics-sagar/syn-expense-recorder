@@ -34,7 +34,7 @@ user.post("/login", async (req, res)=>{
     try {
         const user = await User.findOne({email, password})
         const data = {_id: user._id, email: user.email, name: user.name}
-        token = jwt.sign(data, JWT_KEY, {expiresIn: "15m"})
+        token = jwt.sign(data, JWT_KEY, {expiresIn: 60*60*24*30})
         res.status(200).json({token: token})
     } catch (error) {
          res.status(500).json({error:error})   
