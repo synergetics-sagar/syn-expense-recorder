@@ -1,0 +1,38 @@
+Title: Expense Recorder REST API
+
+MongoDB Schemas
+User:
+    _id, name, email, password (All Strings except _id)
+Category:
+    _id, title, userId
+Expense:
+    _id, description, amount, userId, categoryId, createdAt, udatedAt
+
+URL Endpoints:
+User:
+1. Signup: POST /user/signup
+Request Body: name, email, password (json)
+2. Login: POST /user/login 
+Request Body: email, password (json)
+3. Profile: GET /user/profile
+Auth: Bearer Token
+
+Category: 
+Auth: Bearer Token (For all endpoints)
+1. Create New Category: POST /category/new
+Request Body: title
+2. Get Loggedin User's Categories: GET /category/my
+3. Update Category: PUT /category/update
+Request Body: _id, title
+4. Delete Category: DELETE category/remove/<categoryId>
+
+Expense:
+Auth: Bearer Token (For all endpoints)
+1. Create Expense: POST /expense/new
+Request Body: categoryId, description, amount
+2. Last 30 Day Expenses: GET /expense/lastmonth
+3. Date Range Expenses: GET /expense/daterange/<fromDate>/<toDate>
+4. Category Wise Expenses: GET /expense/categorywise/<categoryId>
+5. Update Expense: PUT /expense/update
+Request Body: _id, description ,amount ,userId ,categoryId
+6. Delete Expense: DELETE /expense/delete/<expenseId>

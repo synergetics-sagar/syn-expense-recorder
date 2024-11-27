@@ -1,4 +1,6 @@
 const express = require("express")
+const swaggerUi = require("swagger-ui-express")
+const swaggerDocument = require("./docs/swagger.json")
 const mongoose = require("mongoose")
 const {PORT, LOCAL_DB_URL} = require("./constants/appConstants")
 const user = require("./routes/userRoute")
@@ -7,6 +9,7 @@ const category = require("./routes/categoryRoute")
 const app = express()
 
 // Adding Middlewares
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use(express.json()) // Getting JSON Body with POST Request
 
 // Adding Routes
@@ -35,5 +38,6 @@ app.use((err, req, res, next)=>{
 
 // Server listening on PORT
 app.listen(PORT, ()=>{
-    console.log(`SERVER STARTED ON PORT: ${PORT}`)
+    console.log(`SERVER STARTED ON http://localhost:${PORT}`)
+    console.log(`Swagger Docs available on http://localhost:${PORT}/api-docs`)
 })

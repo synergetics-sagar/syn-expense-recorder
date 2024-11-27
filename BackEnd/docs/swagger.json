@@ -1,0 +1,284 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Expense Recorder REST API",
+      "description": "API documentation for the Expense Recorder application.",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8080",
+        "description": "Local server"
+      }
+    ],
+    "paths": {
+      "/user/signup": {
+        "post": {
+          "summary": "Signup",
+          "description": "Create a new user account.",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "email": { "type": "string", "format": "email" },
+                    "password": { "type": "string", "format": "password" }
+                  },
+                  "required": ["name", "email", "password"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "User created successfully." },
+            "400": { "description": "Invalid input." }
+          }
+        }
+      },
+      "/user/login": {
+        "post": {
+          "summary": "Login",
+          "description": "Authenticate a user and provide a token.",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": { "type": "string", "format": "email" },
+                    "password": { "type": "string", "format": "password" }
+                  },
+                  "required": ["email", "password"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "Authentication successful, token returned." },
+            "401": { "description": "Unauthorized." }
+          }
+        }
+      },
+      "/user/profile": {
+        "get": {
+          "summary": "Profile",
+          "description": "Get logged-in user's profile.",
+          "security": [{ "bearerAuth": [] }],
+          "responses": {
+            "200": { "description": "Profile data returned." },
+            "401": { "description": "Unauthorized." }
+          }
+        }
+      },
+      "/category/new": {
+        "post": {
+          "summary": "Create New Category",
+          "description": "Add a new category for the logged-in user.",
+          "security": [{ "bearerAuth": [] }],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "title": { "type": "string" }
+                  },
+                  "required": ["title"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "Category created successfully." },
+            "400": { "description": "Invalid input." }
+          }
+        }
+      },
+      "/category/my": {
+        "get": {
+          "summary": "Get User's Categories",
+          "description": "Retrieve all categories for the logged-in user.",
+          "security": [{ "bearerAuth": [] }],
+          "responses": {
+            "200": { "description": "Categories retrieved successfully." },
+            "401": { "description": "Unauthorized." }
+          }
+        }
+      },
+      "/category/update": {
+        "put": {
+          "summary": "Update Category",
+          "description": "Update a category title for the logged-in user.",
+          "security": [{ "bearerAuth": [] }],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": { "type": "string" },
+                    "title": { "type": "string" }
+                  },
+                  "required": ["_id", "title"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "Category updated successfully." },
+            "400": { "description": "Invalid input." },
+            "404": { "description": "Category not found." }
+          }
+        }
+      },
+      "/category/remove/{categoryId}": {
+        "delete": {
+          "summary": "Delete Category",
+          "description": "Delete a category for the logged-in user.",
+          "security": [{ "bearerAuth": [] }],
+          "parameters": [
+            {
+              "name": "categoryId",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Category deleted successfully." },
+            "404": { "description": "Category not found." }
+          }
+        }
+      },
+      "/expense/new": {
+        "post": {
+          "summary": "Create Expense",
+          "description": "Add a new expense.",
+          "security": [{ "bearerAuth": [] }],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "categoryId": { "type": "string" },
+                    "description": { "type": "string" },
+                    "amount": { "type": "number" }
+                  },
+                  "required": ["categoryId", "description", "amount"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "Expense created successfully." },
+            "400": { "description": "Invalid input." }
+          }
+        }
+      },
+      "/expense/lastmonth": {
+        "get": {
+          "summary": "Last 30 Day Expenses",
+          "description": "Retrieve expenses from the last 30 days.",
+          "security": [{ "bearerAuth": [] }],
+          "responses": {
+            "200": { "description": "Expenses retrieved successfully." },
+            "401": { "description": "Unauthorized." }
+          }
+        }
+      },
+      "/expense/daterange/{fromDate}/{toDate}": {
+        "get": {
+          "summary": "Date Range Expenses",
+          "description": "Retrieve expenses within a date range.",
+          "security": [{ "bearerAuth": [] }],
+          "parameters": [
+            { "name": "fromDate", "in": "path", "required": true, "schema": { "type": "string", "format": "date" } },
+            { "name": "toDate", "in": "path", "required": true, "schema": { "type": "string", "format": "date" } }
+          ],
+          "responses": {
+            "200": { "description": "Expenses retrieved successfully." },
+            "400": { "description": "Invalid date range." }
+          }
+        }
+      },
+      "/expense/categorywise/{categoryId}": {
+        "get": {
+          "summary": "Category Wise Expenses",
+          "description": "Retrieve all expenses for a specific category.",
+          "security": [{ "bearerAuth": [] }],
+          "parameters": [
+            { "name": "categoryId", "in": "path", "required": true, "schema": { "type": "string" } }
+          ],
+          "responses": {
+            "200": { "description": "Expenses retrieved successfully." },
+            "404": { "description": "Category not found." }
+          }
+        }
+      },
+      "/expense/update": {
+        "put": {
+          "summary": "Update Expense",
+          "description": "Update an expense for the logged-in user.",
+          "security": [{ "bearerAuth": [] }],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": { "type": "string" },
+                    "description": { "type": "string" },
+                    "amount": { "type": "number" },
+                    "categoryId": { "type": "string" }
+                  },
+                  "required": ["_id", "description", "amount", "categoryId"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "Expense updated successfully." },
+            "400": { "description": "Invalid input." }
+          }
+        }
+      },
+      "/expense/delete/{expenseId}": {
+        "delete": {
+          "summary": "Delete Expense",
+          "description": "Delete an expense for the logged-in user.",
+          "security": [{ "bearerAuth": [] }],
+          "parameters": [
+            {
+              "name": "expenseId",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Expense deleted successfully." },
+            "404": { "description": "Expense not found." }
+          }
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    }
+  }
+  
